@@ -56,25 +56,25 @@ import java.util.List;
 import java.util.Map;
 
 public class TeachersListCSE extends AppCompatActivity {
-private ImageButton addimage,searchbt, closebt;
-private EditText tname, contact, insearcht;
-private Button sub;
-private CardView addingvisibility, deletevisibility;
-private Uri imageUri;
-private StorageReference mstorage;
-private DatabaseReference mdatabase;
-private static final int GALLERY_REQUEST=1;
-private ProgressDialog mprogreesdialog;
-private RecyclerView tech_cse_recycle;
-private EditText getkey;
-private Button delete_tech;
-private CardView cardViewvisible;
-private FirebaseAuth mauth;
-private FirebaseAuth.AuthStateListener mauthlisten;
-private RadioButton search, cse, eee, ce;
-private Spinner tdept,position;
-private ImageView call;
-private int requst_call=1;
+    private ImageButton addimage,searchbt, closebt;
+    private EditText tname, contact, insearcht;
+    private Button sub;
+    private CardView addingvisibility, deletevisibility;
+    private Uri imageUri;
+    private StorageReference mstorage;
+    private DatabaseReference mdatabase;
+    private static final int GALLERY_REQUEST=1;
+    private ProgressDialog mprogreesdialog;
+    private RecyclerView tech_cse_recycle;
+    private EditText getkey;
+    private Button delete_tech;
+    private CardView cardViewvisible;
+    private FirebaseAuth mauth;
+    private FirebaseAuth.AuthStateListener mauthlisten;
+    private RadioButton search, cse, eee, ce;
+    private Spinner tdept,position;
+    private ImageView call;
+    private int requst_call=1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,80 +139,80 @@ private int requst_call=1;
             }
         });
         addimage.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent galleryIntent=new Intent(Intent.ACTION_GET_CONTENT);
-            galleryIntent.setType("image/*");
-            startActivityForResult(galleryIntent, GALLERY_REQUEST);
-        }
-    });
-
-    sub.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mprogreesdialog.setMessage("Posting to Path...");
-            mprogreesdialog.show();
-            final String ttname=tname.getText().toString().trim().toLowerCase();
-            final String tposition=position.getSelectedItem().toString().trim();
-            final String tcontact=contact.getText().toString().trim();
-            final String dept=tdept.getSelectedItem().toString().trim();
-            if(!TextUtils.isEmpty(ttname)&&!TextUtils.isEmpty(tposition)&&!TextUtils.isEmpty(tcontact))
-            {
-                final StorageReference filepath=mstorage.child("TechlistCSE").child(imageUri.getLastPathSegment());
-                filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        //Uri downloaduri=taskSnapshot.getDownloadUrl();
-                        //Task<Uri> u = taskSnapshot.getStorage().getDownloadUrl();
-                        final DatabaseReference newPost=mdatabase.push();
-                        newPost.child("tech_name").setValue(ttname);
-                        newPost.child("tech_position").setValue(tposition);
-                        newPost.child("tech_contact").setValue(tcontact);
-                        newPost.child("tech_dept").setValue("Dept. of "+dept);
-                        //newPost.child("tech_img").setValue(u.toString());
-                        filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Map newImage = new HashMap();
-                                newImage.put("tech_image", uri.toString());
-                                newPost.updateChildren(newImage);
-
-                                //finish();
-                                return;
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                //finish();
-                                return;
-                            }
-                        });
-
-                        mprogreesdialog.dismiss();
-                    }
-                });
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent=new Intent(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, GALLERY_REQUEST);
             }
-        }
-    });
+        });
 
-    delete_tech.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(TeachersListCSE.this, "key is: "+getkey.getText().toString(), Toast.LENGTH_SHORT).show();
-            mdatabase = FirebaseDatabase.getInstance().getReference()
-                    .child("TechListCSE").child(getkey.getText().toString());
-            mdatabase.removeValue();
-        }
-    });
+        sub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mprogreesdialog.setMessage("Posting to Path...");
+                mprogreesdialog.show();
+                final String ttname=tname.getText().toString().trim().toLowerCase();
+                final String tposition=position.getSelectedItem().toString().trim();
+                final String tcontact=contact.getText().toString().trim();
+                final String dept=tdept.getSelectedItem().toString().trim();
+                if(!TextUtils.isEmpty(ttname)&&!TextUtils.isEmpty(tposition)&&!TextUtils.isEmpty(tcontact))
+                {
+                    final StorageReference filepath=mstorage.child("TechlistCSE").child(imageUri.getLastPathSegment());
+                    filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //Uri downloaduri=taskSnapshot.getDownloadUrl();
+                            //Task<Uri> u = taskSnapshot.getStorage().getDownloadUrl();
+                            final DatabaseReference newPost=mdatabase.push();
+                            newPost.child("tech_name").setValue(ttname);
+                            newPost.child("tech_position").setValue(tposition);
+                            newPost.child("tech_contact").setValue(tcontact);
+                            newPost.child("tech_dept").setValue("Dept. of "+dept);
+                            //newPost.child("tech_img").setValue(u.toString());
+                            filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Map newImage = new HashMap();
+                                    newImage.put("tech_image", uri.toString());
+                                    newPost.updateChildren(newImage);
 
-    searchbt.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String searchtext=insearcht.getText().toString().trim().toLowerCase();
-            String orderchild="tech_name";
-            searchteacherlist(searchtext, orderchild);
-        }
-    });
+                                    //finish();
+                                    return;
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    //finish();
+                                    return;
+                                }
+                            });
+
+                            mprogreesdialog.dismiss();
+                        }
+                    });
+                }
+            }
+        });
+
+        delete_tech.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(TeachersListCSE.this, "key is: "+getkey.getText().toString(), Toast.LENGTH_SHORT).show();
+                mdatabase = FirebaseDatabase.getInstance().getReference()
+                        .child("TechListCSE").child(getkey.getText().toString());
+                mdatabase.removeValue();
+            }
+        });
+
+        searchbt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchtext=insearcht.getText().toString().trim().toLowerCase();
+                String orderchild="tech_name";
+                searchteacherlist(searchtext, orderchild);
+            }
+        });
 
     }
 
@@ -230,7 +230,7 @@ private int requst_call=1;
     {
         Toast.makeText(this, "Searching: "+searchtxt, Toast.LENGTH_SHORT).show();
         Query query=mdatabase.orderByChild(orderchild).startAt(searchtxt).endAt(searchtxt+"\uf8ff");
-       // Query query=mdatabase.orderByChild("tech_name").equalTo(searchtxt);
+        // Query query=mdatabase.orderByChild("tech_name").equalTo(searchtxt);
         FirebaseRecyclerAdapter<AddteacherListCSE, TeachercseViewholder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<AddteacherListCSE, TeachercseViewholder>(
                 AddteacherListCSE.class,
                 R.layout.list_layout_teacher_cse,
@@ -332,7 +332,7 @@ private int requst_call=1;
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                       // Toast.makeText(TeachersListCSE.this,tech_key,Toast.LENGTH_LONG).show();
+                        // Toast.makeText(TeachersListCSE.this,tech_key,Toast.LENGTH_LONG).show();
                         getkey.setText(tech_key.toString().trim());
                     }
                 });
@@ -382,7 +382,7 @@ private int requst_call=1;
         public TeachercseViewholder(View itemView)
         {
             super(itemView);
-           mView=itemView;
+            mView=itemView;
         }
         public  void settechname(String name)
         {
@@ -457,6 +457,49 @@ private int requst_call=1;
                 String orderchild3="tech_dept";
                 searchteacherlist(searchtext3, orderchild3);
                 return true;
+            case R.id.Lecturer:
+                item.setChecked(true);
+                String searchtext11="Lecturer";
+                String orderchild11="tech_position";
+                searchteacherlist(searchtext11, orderchild11);
+                return true;
+            case R.id.Professor:
+                item.setChecked(true);
+                String searchtext4="Professor";
+                String orderchild4="tech_position";
+                searchteacherlist(searchtext4, orderchild4);
+                return true;
+            case R.id.Assistant_Professor:
+                item.setChecked(true);
+                String searchtext5="Assistant Professor";
+                String orderchild5="tech_position";
+                searchteacherlist(searchtext5, orderchild5);
+                return true;
+            case R.id.Associate_Professor:
+                item.setChecked(true);
+                String searchtext6="Associate Professor";
+                String orderchild6="tech_position";
+                searchteacherlist(searchtext6, orderchild6);
+                return true;
+            case R.id.Head:
+                item.setChecked(true);
+                String searchtext7="Head";
+                String orderchild7="tech_position";
+                searchteacherlist(searchtext7, orderchild7);
+                return true;
+            case R.id.Professor_Head:
+                item.setChecked(true);
+                String searchtext8="Professor & Head";
+                String orderchild8="tech_position";
+                searchteacherlist(searchtext8, orderchild8);
+                return true;
+            case R.id.Principle:
+                item.setChecked(true);
+                String searchtext9="Principle";
+                String orderchild9="tech_position";
+                searchteacherlist(searchtext9, orderchild9);
+                return true;
+            //tech_position
         }
         return super.onOptionsItemSelected(item);
     }
@@ -478,6 +521,7 @@ private int requst_call=1;
         posi.add("Associate Professor");
         posi.add("Assistant Professor");
         posi.add("Lecturer");
+        posi.add("Principle");
 
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, posi);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
